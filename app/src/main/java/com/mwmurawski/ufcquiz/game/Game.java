@@ -13,29 +13,30 @@ import io.realm.RealmResults;
 
 public class Game {
 
-    Realm realm;
-    Questionable quiz;
-    List<Question> listOfQuestions;
-    Stack<Question> stackOfQuestions;
+    private Realm realm;
+    private Questionable quiz;
+    private List<Question> listOfQuestions;
+    private Stack<Question> stackOfQuestions;
 
     public Game() {
         realm = Realm.getDefaultInstance();
+        initGame();
     }
 
-    public Question initGame() {
+    private Question initGame() {
         listOfQuestions = getQuestions();
         Collections.shuffle(listOfQuestions);
         stackOfQuestions.addAll(listOfQuestions);
         return stackOfQuestions.pop();
     }
 
-    public Question getNextQuestion(){
+    public Question getNextQuestion() {
         return stackOfQuestions.pop();
     }
 
 
-    private List<Question> getQuestions(){
-        RealmResults<Question> result =  realm.where(Question.class).findAll();
+    private List<Question> getQuestions() {
+        RealmResults<Question> result = realm.where(Question.class).findAll();
         return realm.copyFromRealm(result);
     }
 }

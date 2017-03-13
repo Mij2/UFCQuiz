@@ -7,29 +7,23 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
-import android.widget.TextView;
 
-import butterknife.BindView;
+public class MainWindowFragment extends Fragment {
 
-public class GameFragment extends Fragment {
+    private static final String MODE = Const.MODE.getName();
 
-    @BindView(R.id.question) TextView question;
-    @BindView(R.id.answer1) RadioButton answer1;
-    @BindView(R.id.answer2) RadioButton answer2;
-    @BindView(R.id.answer3) RadioButton answer3;
-    @BindView(R.id.answer4) RadioButton answer4;
+    private String currentMode;
 
-    private OnFragmentGameListener mCallback;
+    private OnFragmentInteractionListener mListener;
 
-    public GameFragment() {
+    public MainWindowFragment() {
         // Required empty public constructor
     }
 
-    public static GameFragment newInstance(String param1, String param2) {
-        GameFragment fragment = new GameFragment();
+    public static MainWindowFragment newInstance(Const mode) {
+        MainWindowFragment fragment = new MainWindowFragment();
         Bundle args = new Bundle();
-        //arguments if needed
+        args.putString(MODE, mode.getName());
         fragment.setArguments(args);
         return fragment;
     }
@@ -37,40 +31,43 @@ public class GameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            currentMode = getArguments().getString(MODE);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game, container, false);
+        return inflater.inflate(R.layout.fragment_main_window, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mCallback != null) {
-            mCallback.onFragmentInteraction(uri);
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
         }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentGameListener) {
-            mCallback = (OnFragmentGameListener) context;
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentGameListener");
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mCallback = null;
+        mListener = null;
     }
 
-    public interface OnFragmentGameListener {
+    public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
