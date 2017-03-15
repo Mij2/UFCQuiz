@@ -10,9 +10,9 @@
         android:id="@+id/game_window"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/button_window"
         android:name="com.mwmurawski.ufcquiz.MainWindowFragment"
-        tools:layout="@layout/fragment_main_window"/>
+        tools:layout="@layout/fragment_main_window"
+        android:layout_above="@+id/button_window"/>
 
     <fragment
         android:id="@+id/button_window"

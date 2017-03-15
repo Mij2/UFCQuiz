@@ -1,6 +1,7 @@
 package com.mwmurawski.ufcquiz.game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.realm.RealmObject;
@@ -15,6 +16,10 @@ public class Question extends RealmObject implements Questionable{
     private String answer1;
     private String answer2;
     private String answer3;
+
+    public Question(){
+        //needed default constructor
+    }
 
     public Question(String question, String rightAnswer, String answer1, String answer2, String answer3) {
         this.question = question;
@@ -41,6 +46,13 @@ public class Question extends RealmObject implements Questionable{
         answers.add(answer1);
         answers.add(answer2);
         answers.add(answer3);
+        return answers;
+    }
+
+    @Override
+    public List<String> getShuffledAnswers() {
+        List<String> answers = getAnswers();
+        Collections.shuffle(answers);
         return answers;
     }
 }

@@ -15,6 +15,7 @@ public enum Const {
     MODE_START("mode_start"),
     MODE_GAME("mode_game"),
     MODE_END("mode_end"),
+    RESULT("result");
     ;
 
     private final String name;

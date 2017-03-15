@@ -1,8 +1,8 @@
 package com.mwmurawski.ufcquiz;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +14,7 @@ import butterknife.OnClick;
 public class ButtonFragment extends Fragment {
 
     private static final String MODE = Const.MODE.getName();
-    private String currentMode;
+    private String currentModeString;
 
     private OnFragmentStartEndListener mCallback;
 
@@ -36,12 +36,20 @@ public class ButtonFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            currentMode = getArguments().getString(MODE);
+            currentModeString = getArguments().getString(MODE);
         }
 
-        if (currentMode != null){
-            switch (currentMode){
-                case Const.BUTTONS_START:
+        if (currentModeString != null){
+
+            switch (Const.valueOf(currentModeString)){
+                case BUTTONS_START:
+                    button.setText("START");
+                    break;
+                case BUTTONS_NEXT:
+                    button.setText("NEXT QUESTION");
+                    break;
+                case BUTTONS_END:
+                    button.setText("RESTART");
                     break;
             }
         }
@@ -74,10 +82,10 @@ public class ButtonFragment extends Fragment {
 
     @OnClick(R.id.button)
     public void buttonClick(){
-        mCallback.onButtonClick();
+        mCallback.onButtonClick(currentModeString);
     }
 
     public interface OnFragmentStartEndListener {
-        void onButtonClick();
+        void onButtonClick(String mode);
     }
 }
