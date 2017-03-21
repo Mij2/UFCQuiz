@@ -5,17 +5,23 @@ package com.mwmurawski.ufcquiz;
  */
 
 public enum Const {
-    MODE("mode"),
+    STATE("state"),
+
     BUTTONS_START("buttons_start"),
     BUTTONS_END("buttons_end"),
     BUTTONS_NEXT("buttons_next"),
-    CONTENT_START("content_start"),
-    CONTENT_GAME("content_game"),
-    CONTENT_END("content_end"),
-    MODE_START("mode_start"),
-    MODE_GAME("mode_game"),
-    MODE_END("mode_end"),
-    RESULT("result");
+
+    GAME_STATE_START("game_state_start"),
+    GAME_STATE_PLAYING("game_state_playing"),
+    GAME_STATE_END("game_state_end"),
+
+    RESULT("result"),
+    NUMBER_OF_QUESTIONS("number_of_questions"),
+
+    RB1("rb1"),
+    RB2("rb2"),
+    RB3("rb3"),
+    RB4("rb4");
     ;
 
     private final String name;

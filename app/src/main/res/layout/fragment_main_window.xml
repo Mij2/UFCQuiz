@@ -2,10 +2,10 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.mwmurawski.ufcquiz.MainWindowFragment">
+             tools:context="com.mwmurawski.ufcquiz.fragment.MainWindowFragment">
 
     <TextView
-        android:id="@+id/main_window_string"
+        android:id="@+id/main_string"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"

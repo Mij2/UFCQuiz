@@ -10,7 +10,7 @@
         android:id="@+id/game_window"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.mwmurawski.ufcquiz.MainWindowFragment"
+        android:name="com.mwmurawski.ufcquiz.fragment.MainWindowFragment"
         tools:layout="@layout/fragment_main_window"
         android:layout_above="@+id/button_window"/>
 
@@ -19,7 +19,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:name="com.mwmurawski.ufcquiz.ButtonFragment"
+        android:name="com.mwmurawski.ufcquiz.fragment.ButtonFragment"
         tools:layout="@layout/fragment_button"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_window"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="121dp"
+        android:layout_marginStart="143dp"
+        android:text="TextView"/>
 
 </RelativeLayout>

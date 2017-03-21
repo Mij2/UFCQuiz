@@ -17,6 +17,8 @@ public class Question extends RealmObject implements Questionable{
     private String answer2;
     private String answer3;
 
+    private List<String> answersList;
+
     public Question(){
         //needed default constructor
     }
@@ -27,6 +29,21 @@ public class Question extends RealmObject implements Questionable{
         this.answer1 = answer1;
         this.answer2 = answer2;
         this.answer3 = answer3;
+
+        populateAnswersList(rightAnswer,answer1,answer2,answer3);
+        shuffleAnswers();
+    }
+
+    private void shuffleAnswers(){
+        Collections.shuffle(answersList);
+    }
+
+    private void populateAnswersList(String a1, String a2, String a3, String a4){
+        answersList = new ArrayList<>(4);
+        answersList.add(a1);
+        answersList.add(a2);
+        answersList.add(a3);
+        answersList.add(a4);
     }
 
     @Override
@@ -41,18 +58,10 @@ public class Question extends RealmObject implements Questionable{
 
     @Override
     public List<String> getAnswers(){
-        List<String> answers = new ArrayList<>();
-        answers.add(rightAnswer);
-        answers.add(answer1);
-        answers.add(answer2);
-        answers.add(answer3);
-        return answers;
+        return answersList;
     }
 
-    @Override
-    public List<String> getShuffledAnswers() {
-        List<String> answers = getAnswers();
-        Collections.shuffle(answers);
-        return answers;
+    public Integer getCorrectAnswerId(){
+        return answersList.indexOf(rightAnswer);
     }
 }

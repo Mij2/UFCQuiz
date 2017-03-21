@@ -1,4 +1,4 @@
-package com.mwmurawski.ufcquiz;
+package com.mwmurawski.ufcquiz.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -8,13 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.mwmurawski.ufcquiz.Const;
+import com.mwmurawski.ufcquiz.R;
+
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 public class ButtonFragment extends Fragment {
 
-    private static final String MODE = Const.MODE.getName();
+    private static final String MODE = Const.STATE.getName();
     private String currentModeString;
+
+    private Unbinder unbinder;
 
     private OnFragmentStartEndListener mCallback;
 
@@ -35,31 +42,38 @@ public class ButtonFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            currentModeString = getArguments().getString(MODE);
-        }
 
-        if (currentModeString != null){
-
-            switch (Const.valueOf(currentModeString)){
-                case BUTTONS_START:
-                    button.setText("START");
-                    break;
-                case BUTTONS_NEXT:
-                    button.setText("NEXT QUESTION");
-                    break;
-                case BUTTONS_END:
-                    button.setText("RESTART");
-                    break;
-            }
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_button, container, false);
+        View view = inflater.inflate(R.layout.fragment_button, container, false);
+        unbinder = ButterKnife.bind(this, view);
+
+        if (getArguments() != null) {
+            currentModeString = getArguments().getString(MODE);
+        }
+
+        if (currentModeString != null) {
+            changeButtonText(currentModeString);
+        }
+
+        return view;
+    }
+
+    public void changeButtonText(String mode){
+        switch (Const.valueOf(mode)){
+            case BUTTONS_START:
+                button.setText("START");
+                break;
+            case BUTTONS_NEXT:
+                button.setText("NEXT QUESTION");
+                break;
+            case BUTTONS_END:
+                button.setText("RESTART");
+                break;
+        }
     }
 
 
@@ -74,18 +88,33 @@ public class ButtonFragment extends Fragment {
         }
     }
 
+    public void disableButton() {
+        button.setEnabled(false);
+    }
+
+    public void enableButton() {
+        button.setEnabled(true);
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
         mCallback = null;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
     @OnClick(R.id.button)
     public void buttonClick(){
-        mCallback.onButtonClick(currentModeString);
+        currentModeString = mCallback.onButtonClick(currentModeString);
+        changeButtonText(currentModeString);
     }
 
     public interface OnFragmentStartEndListener {
-        void onButtonClick(String mode);
+        String onButtonClick(String mode);
     }
 }

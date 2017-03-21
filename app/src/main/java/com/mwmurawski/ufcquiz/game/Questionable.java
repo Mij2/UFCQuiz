@@ -7,5 +7,5 @@ public interface Questionable {
     public String getQuestion();
     public String getRightAnswer();
     public List<String> getAnswers();
-    public List<String> getShuffledAnswers();
+    public Integer getCorrectAnswerId();
 }
