@@ -2,8 +2,8 @@ package com.mwmurawski.ufcquiz.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,33 +18,45 @@ import butterknife.Unbinder;
 
 public class MainWindowFragment extends Fragment {
 
+    //const
     private static final String MODE = Const.STATE.getName();
 
+    //views
+    @BindView(R.id.main_string) TextView mainWindowString;
+
+    ///vars
+    private Unbinder unbinder; //ButterKnife
     private String currentModeString;
     private Integer result;
-
-    private Unbinder unbinder;
-
-    private OnFragmentInteractionListener mListener;
-
-    @BindView(R.id.main_string) TextView mainWindowString;
+    private Integer nrOfQuestions;
+    private OnFragmentInteractionListenerMainWindow mListener;
 
     public MainWindowFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * New instance that provides main window fragment
+     * @param mode Mode of window
+     * @return Returns fragment
+     */
     public static MainWindowFragment newInstance(Const mode) {
         MainWindowFragment fragment = new MainWindowFragment();
-        fragment.setMainText("WELCOME IN\nUFC QUIZ");
         Bundle args = new Bundle();
         args.putString(MODE, mode.getName());
         fragment.setArguments(args);
         return fragment;
     }
 
+    /**
+     * New instance that provides main window fragment with result
+     * @param mode Mode of window
+     * @param result - Result of game
+     * @param numberOfQuestions Number of questions in a game
+     * @return Returns fragment with result
+     */
     public static MainWindowFragment newInstance(Const mode, Integer result, Integer numberOfQuestions) {
         MainWindowFragment fragment = new MainWindowFragment();
-        fragment.setMainText("RESULT OF YOUR GAME: \n" + result + " / "+ numberOfQuestions);
         Bundle args = new Bundle();
         args.putString(MODE, mode.getName());
         args.putInt(Const.RESULT.getName(), result);
@@ -62,42 +74,48 @@ public class MainWindowFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_window, container, false);
+
+        //ButterKnife
         unbinder = ButterKnife.bind(this, view);
 
+        //checks arguments initialized in #newInstance()
         if (getArguments() != null) {
             currentModeString = getArguments().getString(MODE);
             result = getArguments().getInt(Const.RESULT.getName());
+            nrOfQuestions = getArguments().getInt(Const.NUMBER_OF_QUESTIONS.getName());
         }
 
+        //Switch creating view dependently on mode
         if (currentModeString != null) {
             switch (Const.valueOf(currentModeString)) {
                 case GAME_STATE_START:
-                    setMainText("START GAME");
+                    mainWindowString.setText(R.string.main_window_welcome);
                     break;
+
                 case GAME_STATE_END:
-                    if (result != null) {
-                        setMainText("Result: " + result);
-                    }else{
-                        setMainText("Result: ERROR"); //shouldn't execute
+                    if (result != null && nrOfQuestions != null) {
+                        mainWindowString.setText(getString(R.string.main_window_result) + result + " / " + nrOfQuestions);
+                    } else {
+                        Log.e("RESULT ERROR", "result or nrOfQuestions is set to null");
+                        mainWindowString.setText(R.string.main_window_error); //shouldn't execute
                     }
                     break;
             }
         }
-
         return view;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+        unbinder.unbind(); //unbinds butterknife
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnFragmentInteractionListenerMainWindow) {
+            mListener = (OnFragmentInteractionListenerMainWindow) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -110,12 +128,7 @@ public class MainWindowFragment extends Fragment {
         mListener = null;
     }
 
-    public void setMainText(String text){
-        mainWindowString.setText(text);
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public interface OnFragmentInteractionListenerMainWindow {
+        //there is no communication between fragment -> activity
     }
 }

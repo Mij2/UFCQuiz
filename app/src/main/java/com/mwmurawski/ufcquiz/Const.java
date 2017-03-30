@@ -1,27 +1,39 @@
 package com.mwmurawski.ufcquiz;
 
-/**
- * Created by Mij on 2017-03-11.
- */
-
 public enum Const {
-    STATE("state"),
+    //state
+    STATE("STATE"),
 
-    BUTTONS_START("buttons_start"),
-    BUTTONS_END("buttons_end"),
-    BUTTONS_NEXT("buttons_next"),
+    //buttons state
+    BUTTONS_START("BUTTONS_START"),
+    BUTTONS_END("BUTTONS_END"),
+    BUTTONS_NEXT("BUTTONS_NEXT"),
 
-    GAME_STATE_START("game_state_start"),
-    GAME_STATE_PLAYING("game_state_playing"),
-    GAME_STATE_END("game_state_end"),
+    //game state
+    GAME_STATE_START("GAME_STATE_START"),
+    GAME_STATE_PLAYING("GAME_STATE_PLAYING"),
+    GAME_STATE_END("GAME_STATE_END"),
 
-    RESULT("result"),
-    NUMBER_OF_QUESTIONS("number_of_questions"),
+    //result consts
+    RESULT("RESULT"),
+    NUMBER_OF_QUESTIONS("NUMBER_OF_QUESTIONS"),
 
-    RB1("rb1"),
-    RB2("rb2"),
-    RB3("rb3"),
-    RB4("rb4");
+    //???
+    RB1("RB1"),
+    RB2("RB2"),
+    RB3("RB3"),
+    RB4("RB4"),
+
+    //sharedPrefs consts
+    DB_SAVED("DB_SAVED"),
+
+    //fragment consts
+    FRAG_BUTTON("FRAG_BUTTON"),
+    FRAG_GAME("FRAG_GAME"),
+    FRAG_MAIN("FRAG_MAIN"),
+
+    FRAG_GAME_REMOVE("FRAG_GAME_REMOVE"),
+    BUTTON_TAG("BUTTON_TAG");
     ;
 
     private final String name;

@@ -21,23 +21,27 @@ import butterknife.Unbinder;
 
 public class GameFragment extends Fragment {
 
-    @BindView(R.id.question) private TextView questionText;
-    @BindView(R.id.answer1) private RadioButton answer1;
-    @BindView(R.id.answer2) private RadioButton answer2;
-    @BindView(R.id.answer3) private RadioButton answer3;
-    @BindView(R.id.answer4) private RadioButton answer4;
+    //butterknife
+    private Unbinder unbinder;
 
-    @BindView(R.id.radioButtonGroup) private RadioGroup radioGroup;
+    //views
+    @BindView(R.id.question) TextView questionText;
+    @BindView(R.id.answer1) RadioButton answer1;
+    @BindView(R.id.answer2) RadioButton answer2;
+    @BindView(R.id.answer3) RadioButton answer3;
 
+    @BindView(R.id.answer4) RadioButton answer4;
+
+    @BindView(R.id.radioButtonGroup) RadioGroup radioGroup;
+    //vars
     private int rightColor;
     private int wrongColor;
+
     private int defaultColor;
 
     private Integer correctId;
 
     private OnFragmentGameListener mCallback;
-
-    private Unbinder unbinder;
 
     public GameFragment() {
         // Required empty public constructor
@@ -61,12 +65,14 @@ public class GameFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game, container, false);
         unbinder = ButterKnife.bind(this, view);
-
+        //Colors handlers
         defaultColor = answer1.getCurrentTextColor();
+        answer1.getTextColors();
         //noinspection deprecation
         rightColor = getResources().getColor(R.color.right);
         //noinspection deprecation
         wrongColor = getResources().getColor(R.color.wrong);
+
         return view;
     }
 
@@ -93,38 +99,69 @@ public class GameFragment extends Fragment {
         unbinder.unbind();
     }
 
-    public void setGameQuestion(final Question question){
+    /**
+     * Sets question and answers to radiobuttons
+     * @param question Question object
+     */
+    public void setGameQuestion(final Question question) {
         questionText.setText(question.getQuestion());
         List<String> answers = question.getAnswers();
         answer1.setText(answers.get(0));
         answer2.setText(answers.get(1));
         answer3.setText(answers.get(2));
         answer4.setText(answers.get(3));
-        correctId = question.getCorrectAnswerId();
+        correctId = question.getCorrectAnswerId(answers);
     }
 
-    public void colorDefault(){
+    /**
+     * Sets radiobuttons to default color
+     */
+    public void colorDefault() {
         answer1.setTextColor(defaultColor);
         answer2.setTextColor(defaultColor);
         answer3.setTextColor(defaultColor);
         answer4.setTextColor(defaultColor);
     }
 
-    public void color(){
-        Boolean rightAnswer = (correctId == getSelectedRadioButtonId());
-        if (answer1.isSelected()) answer1.setTextColor(rightAnswer ? rightColor : wrongColor);
-        if (answer2.isSelected()) answer2.setTextColor(rightAnswer ? rightColor : wrongColor);
-        if (answer3.isSelected()) answer3.setTextColor(rightAnswer ? rightColor : wrongColor);
-        if (answer4.isSelected()) answer4.setTextColor(rightAnswer ? rightColor : wrongColor);
+    /**
+     * Sets color of selected answer,
+     * sets RED when answer is wrong,
+     * sets GREEN when answer is right
+     */
+    public void colorSelectedAnswer() {
+        int selectedRadioButton = getSelectedRadioButtonId();
+        int rightWrong = (correctId == getSelectedRadioButtonId()) ? rightColor : wrongColor;
+
+        if      (selectedRadioButton == 0) answer1.setTextColor(rightWrong);
+        else if (selectedRadioButton == 1) answer2.setTextColor(rightWrong);
+        else if (selectedRadioButton == 2) answer3.setTextColor(rightWrong);
+        else if (selectedRadioButton == 3) answer4.setTextColor(rightWrong);
     }
 
+    /**
+     * Deselects radiobutton
+     */
+    public void deselectRadioGroup() {
+        radioGroup.clearCheck();
+    }
 
-    public int getSelectedRadioButtonId(){
-        return radioGroup.getCheckedRadioButtonId();
+    /**
+     * Get id of selected button, first is 0, second 1, etc.
+     * @return index of selected radiobutton
+     */
+    public int getSelectedRadioButtonId() {
+        return radioGroup.indexOfChild(getActivity().findViewById(radioGroup.getCheckedRadioButtonId()));
+    }
+
+    /**
+     * Checks if any of radiobutton is selected
+     * @return true if there is no selected radiobutton, if there is selection, returns false
+     */
+    public boolean isSelectionEmpty(){
+        return radioGroup.getCheckedRadioButtonId() == -1;
     }
 
     public interface OnFragmentGameListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction();
+        //there is no communication between fragment -> activity
     }
 }

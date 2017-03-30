@@ -4,30 +4,73 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by Mij on 2017-02-28.
  */
 
 public class DataInitializer {
-    public final void initialize(){
-        final List<Question> q4List = getQuestions();
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+    private Realm realm;
+
+    /**
+     * Initialize realm field
+     */
+    private void init(){
+        realm = Realm.getDefaultInstance();
+    }
+
+    /**
+     * Checks if there is incoherence in database, if it is or db is empty,
+     * makes transaction and set list of questions to database.
+     */
+    public void initialize() {
+        init();
+        final List<Question> qList = getQuestions();
+
+        //check size of list and db table and clear if there is incoherence
+        final RealmResults<Question> dbList = realm.where(Question.class).findAll();
+        if (isDbIncoherence(qList.size(), dbList.size())){
+            clearDb(dbList);
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.copyToRealm(qList);
+                }
+            });
+        }
+    }
+
+    /**
+     * Clear all records in provided list from Realm database.
+     */
+    private void clearDb(final RealmResults dbList) {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                for(Question q : q4List){
-                    realm.copyToRealm(q);
-                }
+                dbList.deleteAllFromRealm();
             }
         });
     }
 
     /**
-     * To add question just add new element in list that include constructor of Question class
+     * Check if database is incoherence with provided list of questions.
+     * It check sizes of list from method and size of list from database.
+     * @param sizeOfList - size of provided list
+     * @param sizeOfDbTable- size of record in database
+     * @return returns true if sizes are not equal, false if sizes are equal.
+     */
+    private boolean isDbIncoherence(final Integer sizeOfList, final Integer sizeOfDbTable){
+        return sizeOfList.compareTo(sizeOfDbTable) != 0;
+
+    }
+
+    /**
+     * To add question just add new element in list that include constructor of Question class.
+     * App will automatically check size of list and size of database, in case of incoherence, db will update all questions.
      * @return list of questions
      */
-    private List<Question> getQuestions(){
+    private static List<Question> getQuestions() {
         List<Question> list = new ArrayList<>(10);
         list.add(new Question("Who was first champion in UFC?", "Royce Gracie", "Gerard Gordeau", "Ken Shamrock", "Kevin Rosier"));
         list.add(new Question("In what year was UFC 1?", "1993", "1991", "1995", "1996"));

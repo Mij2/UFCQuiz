@@ -1,56 +1,55 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context="com.mwmurawski.ufcquiz.fragment.GameFragment">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/white"
+             tools:context="com.mwmurawski.ufcquiz.fragment.GameFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="20dp">
 
-    <TextView
-        android:id="@+id/question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:hint="Question?" />
-
-    <RadioGroup
-        android:id="@+id/radioButtonGroup"
-        android:layout_below="@id/question"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <RadioButton
-            android:id="@+id/answer1"
+        <TextView
+            android:id="@+id/question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="answer nr 1"/>
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:textSize="20sp"
+            tools:text="Question?"/>
 
-        <RadioButton
-            android:id="@+id/answer2"
+        <RadioGroup
+            android:id="@+id/radioButtonGroup"
+            android:layout_below="@id/question"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="answer nr 2"/>
+            android:layout_height="wrap_content">
 
-        <RadioButton
-            android:id="@+id/answer3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="answer nr 3"/>
+            <RadioButton
+                android:id="@+id/answer1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="answer nr 1"/>
 
-        <RadioButton
-            android:id="@+id/answer4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="answer nr 4"/>
+            <RadioButton
+                android:id="@+id/answer2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="answer nr 2"/>
+
+            <RadioButton
+                android:id="@+id/answer3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="answer nr 3"/>
+
+            <RadioButton
+                android:id="@+id/answer4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="answer nr 4"/>
 
 
-
-    </RadioGroup>
-
+        </RadioGroup>
     </RelativeLayout>
 </FrameLayout>

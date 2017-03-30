@@ -1,5 +1,6 @@
 package com.mwmurawski.ufcquiz.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,14 +19,18 @@ import butterknife.Unbinder;
 
 public class ButtonFragment extends Fragment {
 
+    //const
     private static final String MODE = Const.STATE.getName();
-    private String currentModeString;
 
+    //views
+    @BindView(R.id.button) Button button;
+
+    //butterknife
     private Unbinder unbinder;
 
+    //vars
+    private String currentModeString;
     private OnFragmentStartEndListener mCallback;
-
-    @BindView(R.id.button) Button button;
 
     public ButtonFragment() {
         // Required empty public constructor
@@ -42,7 +47,15 @@ public class ButtonFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    /**
+     * Change mode of fragment, i.e. button
+     * @param mode mode of fragment
+     */
+    public void changeCurrentModeString(String mode) {
+        currentModeString = mode;
+        setButtonText(mode);
     }
 
     @Override
@@ -55,15 +68,21 @@ public class ButtonFragment extends Fragment {
             currentModeString = getArguments().getString(MODE);
         }
 
+        //sets button text, depends on mode set when instance was made
         if (currentModeString != null) {
-            changeButtonText(currentModeString);
+            setButtonText(currentModeString);
         }
 
         return view;
     }
 
-    public void changeButtonText(String mode){
-        switch (Const.valueOf(mode)){
+    /**
+     * Sets button text, it depends on mode set in argument, there can be 3 modes: BUTTON_START, BUTTON_NEXT, BUTTON_END
+     * @param currentMode mode of buttons
+     */
+    private void setButtonText(String currentMode){
+        if (currentMode == null) return;
+        switch (Const.valueOf(currentMode)){
             case BUTTONS_START:
                 button.setText("START");
                 break;
@@ -77,6 +96,21 @@ public class ButtonFragment extends Fragment {
     }
 
 
+    /**
+     * We need it to work with older phones.. like mine phone for example :P
+     * @param activity activity that sets fragment
+     */
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnFragmentStartEndListener) {
+            mCallback = (OnFragmentStartEndListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
+                    + " must implement OnFragmentStartEndListener");
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -88,10 +122,16 @@ public class ButtonFragment extends Fragment {
         }
     }
 
+    /**
+     * Disable button
+     */
     public void disableButton() {
         button.setEnabled(false);
     }
 
+    /**
+     * Enable button
+     */
     public void enableButton() {
         button.setEnabled(true);
     }
@@ -105,16 +145,22 @@ public class ButtonFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+        unbinder.unbind(); //unbind ButterKnife
     }
+
 
     @OnClick(R.id.button)
     public void buttonClick(){
         currentModeString = mCallback.onButtonClick(currentModeString);
-        changeButtonText(currentModeString);
+        setButtonText(currentModeString);
     }
 
+    //interface needed to communicate with activity
     public interface OnFragmentStartEndListener {
         String onButtonClick(String mode);
+    }
+
+    public boolean isButtonSetToStart(){
+        return button.getText().equals("START");
     }
 }

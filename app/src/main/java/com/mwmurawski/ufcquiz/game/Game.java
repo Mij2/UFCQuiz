@@ -1,7 +1,5 @@
 package com.mwmurawski.ufcquiz.game;
 
-import android.os.Handler;
-
 import com.mwmurawski.ufcquiz.Const;
 
 import java.util.Collections;
@@ -19,11 +17,9 @@ public class Game {
 
     private Integer numberOfQuestions;
     private Realm realm;
-    private Questionable quiz;
     private List<Question> listOfQuestions;
     private Stack<Question> stackOfQuestions;
     private Integer score;
-    private Handler handler;
 
     private Const gameState;
 
@@ -39,7 +35,6 @@ public class Game {
         realm = Realm.getDefaultInstance();
         score = 0;
         initGame();
-        handler = new Handler();
         setGameState(Const.GAME_STATE_START);
         setNumberOfQuestions();
     }
@@ -54,22 +49,14 @@ public class Game {
 
     private void initGame() {
         listOfQuestions = getQuestions();
+        stackOfQuestions = new Stack<>();
         Collections.shuffle(listOfQuestions);
-        stackOfQuestions.addAll(listOfQuestions);
+//        stackOfQuestions.addAll(listOfQuestions);
+        stackOfQuestions.add(listOfQuestions.get(0));
     }
 
     public Question getNextQuestion() {
         return stackOfQuestions.pop();
-    }
-
-    public Question getNextQuestionWithDelay(Integer delay){
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //just wait a delay time
-            }
-        }, delay);
-        return getNextQuestion();
     }
 
     private List<Question> getQuestions() {

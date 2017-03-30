@@ -5,10 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.realm.RealmObject;
-
-/**
- * Created by Mij on 2017-02-28.
- */
+import io.realm.annotations.Ignore;
 
 public class Question extends RealmObject implements Questionable{
     private String question;
@@ -17,7 +14,8 @@ public class Question extends RealmObject implements Questionable{
     private String answer2;
     private String answer3;
 
-    private List<String> answersList;
+    @Ignore
+    private List<String> listOfQuestions;
 
     public Question(){
         //needed default constructor
@@ -29,21 +27,6 @@ public class Question extends RealmObject implements Questionable{
         this.answer1 = answer1;
         this.answer2 = answer2;
         this.answer3 = answer3;
-
-        populateAnswersList(rightAnswer,answer1,answer2,answer3);
-        shuffleAnswers();
-    }
-
-    private void shuffleAnswers(){
-        Collections.shuffle(answersList);
-    }
-
-    private void populateAnswersList(String a1, String a2, String a3, String a4){
-        answersList = new ArrayList<>(4);
-        answersList.add(a1);
-        answersList.add(a2);
-        answersList.add(a3);
-        answersList.add(a4);
     }
 
     @Override
@@ -52,16 +35,24 @@ public class Question extends RealmObject implements Questionable{
     }
 
     @Override
-    public String getRightAnswer(){
-        return rightAnswer;
+    public List<String> getShuffledAnswers(){
+        List<String> list = new ArrayList<>(2);
+        list.add(rightAnswer);
+        list.add(answer1);
+        list.add(answer2);
+        list.add(answer3);
+        Collections.shuffle(list);
+        listOfQuestions = list;
+        return list;
     }
 
     @Override
     public List<String> getAnswers(){
-        return answersList;
+        return listOfQuestions == null ? getShuffledAnswers() : listOfQuestions;
     }
 
-    public Integer getCorrectAnswerId(){
-        return answersList.indexOf(rightAnswer);
+    @Override
+    public Integer getCorrectAnswerId(List<String> list){
+        return list.indexOf(rightAnswer);
     }
 }

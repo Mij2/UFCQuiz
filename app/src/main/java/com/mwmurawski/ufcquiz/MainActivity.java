@@ -1,48 +1,61 @@
 package com.mwmurawski.ufcquiz;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.mwmurawski.ufcquiz.fragment.ButtonFragment;
 import com.mwmurawski.ufcquiz.fragment.GameFragment;
 import com.mwmurawski.ufcquiz.fragment.MainWindowFragment;
+import com.mwmurawski.ufcquiz.game.DataInitializer;
 import com.mwmurawski.ufcquiz.game.Game;
 import com.mwmurawski.ufcquiz.game.Question;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-public class MainActivity extends AppCompatActivity implements GameFragment.OnFragmentGameListener, ButtonFragment.OnFragmentStartEndListener {
+import static android.widget.Toast.LENGTH_SHORT;
 
-    private final Integer DELAY = 500;
+public class MainActivity extends AppCompatActivity implements GameFragment.OnFragmentGameListener, ButtonFragment.OnFragmentStartEndListener, MainWindowFragment.OnFragmentInteractionListenerMainWindow {
 
-    GameFragment.OnFragmentGameListener gameFragmentListener;
-    ButtonFragment.OnFragmentStartEndListener startendFragmentListener;
+    //const
+    private final Integer DELAY = 100;
+
+    //realm
     Realm realm;
 
-//    FragmentManager fragmentManager;
-    FragmentTransaction fragmentTransaction;
+    //communication fragment > activity
+    GameFragment.OnFragmentGameListener gameFragmentListener;
+    ButtonFragment.OnFragmentStartEndListener startendFragmentListener;
 
-    ButtonFragment buttonFragment;
-//    MainWindowFragment mainWindowFragment;
+    //communication activity > fragment
+    MainWindowFragment mainWindowFragment;
     GameFragment gameFragment;
+    ButtonFragment buttonFragment;
 
-    @BindView(R.id.game_window) Fragment gameWindow;
-    @BindView(R.id.button_window) Fragment buttonWindow;
-
+    //game vars
     Game game;
     Question question;
+    DataInitializer dataInitializer;
+
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //CONFIGURATION: ButterKnife
         ButterKnife.bind(this);
+
+        //CONFIGURATION: Realm
+        Realm.init(this);
+        RealmConfiguration configuration = new RealmConfiguration.Builder().build();
+        Realm.setDefaultConfiguration(configuration);
+
+        handler = new Handler();
 
         if (savedInstanceState == null) {
             configureFirstOpen();
@@ -56,87 +69,159 @@ public class MainActivity extends AppCompatActivity implements GameFragment.OnFr
     private void restoreView(Const mode) {
         switch (mode) {
             case GAME_STATE_START: //TODO repair
-                int i;
+//                int i;
                 break;
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        int count = getFragmentManager().getBackStackEntryCount();
 
+        if (count==0){
+            super.onBackPressed();
+        }else{
+
+            if (buttonFragment.isButtonSetToStart())
+                super.onBackPressed();
+
+            game = null;
+            ButtonFragment buttonFragment = (ButtonFragment) getFragmentManager().findFragmentById(R.id.button_window);
+            buttonFragment.changeCurrentModeString(Const.BUTTONS_START.getName());
+
+            //TODO EXTREMELY WRONG.. BUT IT'S WORKING
+
+            MainWindowFragment startFragment = MainWindowFragment.newInstance(Const.GAME_STATE_START);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.game_window, startFragment, Const.FRAG_MAIN.getName())
+                    .commit();
+//            getFragmentManager().popBackStack();
+        }
+    }
 
     private void configureFirstOpen() {
         //Realm configuration
-        RealmConfiguration configuration = new RealmConfiguration.Builder().build();
-        Realm.setDefaultConfiguration(configuration);
         realm = Realm.getDefaultInstance();
+        dataInitializer = new DataInitializer();
+        dataInitializer.initialize();
 
-        //fragment instances
-        MainWindowFragment mainWindowFragment = MainWindowFragment.newInstance(Const.GAME_STATE_START);
+        //fragments initialization
+        mainWindowFragment = MainWindowFragment.newInstance(Const.GAME_STATE_START);
         buttonFragment = ButtonFragment.newInstance(Const.BUTTONS_START);
 
         //fragment configuration
-        fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.game_window, mainWindowFragment);
-        fragmentTransaction.add(R.id.button_window, buttonFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.game_window, mainWindowFragment, Const.FRAG_MAIN.getName())
+                .addToBackStack(null)
+                .commit();
 
+        //one add to back stack, one not..
+        //TODO but it not works perfect
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.button_window, buttonFragment, Const.BUTTON_TAG.getName())
+                .commit();
 
     }
 
-    @Override
-    public void onFragmentInteraction() {
-
-    }
 
     @Override
     public String onButtonClick(final String mode) {
-        switch (Const.valueOf(mode)){
+        String buttonState = null;
+        switch (Const.valueOf(mode)) {
+
+            // ================================================ BUTTON_START CASE
+
             case BUTTONS_START:
-                //Game configuration
+
+                //game config
                 game = new Game();
+
+                //fragment config
                 gameFragment = GameFragment.newInstance();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.game_window, gameFragment, Const.FRAG_GAME_REMOVE.getName())
+                        .commit();
+
+                //executes transactions immediately
+                getFragmentManager().executePendingTransactions();
+
+                //question config
                 question = game.getNextQuestion();
                 gameFragment.setGameQuestion(question);
-                fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.game_window, gameFragment);
-                fragmentTransaction.commit();
-                game.setGameState(Const.GAME_STATE_PLAYING);
-                return Const.BUTTONS_NEXT.getName();
-            case BUTTONS_NEXT:
-                //todo check if there are questions
-                if (game.isQuestionStackEmpty()){
-                    MainWindowFragment endFragment = MainWindowFragment.newInstance(Const.GAME_STATE_END, game.getScore(), game.getNumberOfQuestions());
-                    ButtonFragment buttonFragment = ButtonFragment.newInstance(Const.BUTTONS_END);
-                    fragmentTransaction = getFragmentManager().beginTransaction();
-                    fragmentTransaction.add(R.id.game_window, endFragment);
-                    fragmentTransaction.add(R.id.button_window, buttonFragment);
-                    fragmentTransaction.commit();
-                    game.setGameState(Const.GAME_STATE_END);
-                    return Const.BUTTONS_END.getName();
-                }else {
-                    //TODO check correct answer //TODO count score
-                    if (isRightAnswerSelected(question, gameFragment)) game.incrementScore();
-                    gameFragment.color();
-                    question = game.getNextQuestionWithDelay(DELAY);
-                    gameFragment.setGameQuestion(question);
-                    gameFragment.colorDefault();
-                    return Const.BUTTONS_NEXT.getName();
-                }
-            case BUTTONS_END:
-                MainWindowFragment startFragment = MainWindowFragment.newInstance(Const.GAME_STATE_START);
-                fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.game_window, startFragment);
-                fragmentTransaction.commit();
 
+                //change game state
+                game.setGameState(Const.GAME_STATE_PLAYING);
+
+                buttonState = Const.BUTTONS_NEXT.getName();
+                break;
+
+            // ================================================ BUTTON_NEXT CASE
+
+            case BUTTONS_NEXT:
+
+                if(gameFragment.isSelectionEmpty()) {
+                    buttonState = Const.BUTTONS_NEXT.getName(); //cause var is nulled in the beginning
+                    Toast.makeText(this, "Select answer!", LENGTH_SHORT).show();
+                    break;
+                }
+                //check stack
+                //question config
+                if (isRightAnswerSelected(question, gameFragment)) game.incrementScore();
+
+                gameFragment.colorSelectedAnswer();
+                buttonFragment.disableButton();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (game.isQuestionStackEmpty()) {
+                            //info: END OF GAME
+                            //fragment config
+
+                            MainWindowFragment endFragment = MainWindowFragment.newInstance(Const.GAME_STATE_END, game.getScore(), game.getNumberOfQuestions());
+                            getFragmentManager().beginTransaction()
+                                    .replace(R.id.game_window, endFragment)
+                                    .commit();
+
+                            buttonFragment.enableButton();
+                            //change game state
+                            game.setGameState(Const.GAME_STATE_END);
+                        } else {
+
+                            //info: NEXT QUESTION CONFIG
+                            question = game.getNextQuestion();
+                            gameFragment.setGameQuestion(question);
+                            gameFragment.colorDefault();
+                            gameFragment.deselectRadioGroup();
+                            buttonFragment.enableButton();
+                        }
+                    }
+                }, DELAY);
+
+                //change button state (depends on if stack is empty)
+                buttonState = game.isQuestionStackEmpty() ? Const.BUTTONS_END.getName() : Const.BUTTONS_NEXT.getName();
+                break;
+
+            // ================================================ BUTTON_END CASE
+
+            case BUTTONS_END:
+                //fragment config
+                MainWindowFragment startFragment = MainWindowFragment.newInstance(Const.GAME_STATE_START);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.game_window, startFragment, Const.FRAG_MAIN.getName())
+                        .commit();
+
+                //change game state
                 game.setGameState(Const.GAME_STATE_START);
-                return Const.BUTTONS_START.getName();
+                buttonState = Const.BUTTONS_START.getName();
         }
-        Log.e("Illegal state", "Wrong state, check button code.");
-        return Const.BUTTONS_START.getName(); //should never be execute
+        return buttonState;
     }
 
 
-    private boolean isRightAnswerSelected(Question question, GameFragment fragment){
-        return question.getCorrectAnswerId().equals(fragment.getSelectedRadioButtonId());
+    private boolean isRightAnswerSelected(Question question, GameFragment fragment) {
+        return question.getCorrectAnswerId(question.getAnswers()).equals(fragment.getSelectedRadioButtonId());
     }
 }
