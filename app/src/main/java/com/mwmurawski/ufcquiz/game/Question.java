@@ -32,6 +32,28 @@ public class Question extends RealmObject implements Questionable, Parcelable {
         this.answer3 = answer3;
     }
 
+    protected Question(Parcel in) {
+        this.question = in.readString();
+        this.rightAnswer = in.readString();
+        this.answer1 = in.readString();
+        this.answer2 = in.readString();
+        this.answer3 = in.readString();
+        this.listOfQuestions = in.createStringArrayList();
+    }
+
+    @Ignore
+    public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {
+        @Override
+        public Question createFromParcel(Parcel source) {
+            return new Question(source);
+        }
+
+        @Override
+        public Question[] newArray(int size) {
+            return new Question[size];
+        }
+    };
+
     @Override
     public String getQuestion(){
         return question;
@@ -73,25 +95,4 @@ public class Question extends RealmObject implements Questionable, Parcelable {
         dest.writeString(this.answer3);
         dest.writeStringList(this.listOfQuestions);
     }
-
-    protected Question(Parcel in) {
-        this.question = in.readString();
-        this.rightAnswer = in.readString();
-        this.answer1 = in.readString();
-        this.answer2 = in.readString();
-        this.answer3 = in.readString();
-        this.listOfQuestions = in.createStringArrayList();
-    }
-
-    public static final Parcelable.Creator<Question> CREATOR = new Parcelable.Creator<Question>() {
-        @Override
-        public Question createFromParcel(Parcel source) {
-            return new Question(source);
-        }
-
-        @Override
-        public Question[] newArray(int size) {
-            return new Question[size];
-        }
-    };
 }

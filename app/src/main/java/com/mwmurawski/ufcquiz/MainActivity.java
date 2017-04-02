@@ -111,7 +111,7 @@ public class MainActivity
             ButtonFragment buttonFragment = (ButtonFragment) getFragmentManager().findFragmentById(R.id.button_window);
             buttonFragment.changeCurrentModeString(Const.BUTTONS_START.getName());
 
-            //TODO EXTREMELY WRONG.. BUT IT'S WORKING (almost)
+            //TODO NOT BEST APROACH.. BUT IT'S WORKING (almost)
 
             MainWindowFragment startFragment = MainWindowFragment.newInstance(Const.GAME_STATE_START);
             getFragmentManager().beginTransaction()

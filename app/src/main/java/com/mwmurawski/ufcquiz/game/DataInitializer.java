@@ -10,6 +10,9 @@ import io.realm.RealmResults;
  * Created by Mij on 2017-02-28.
  */
 
+/**
+ * Class helps to retrieve data from Realm database
+ */
 public class DataInitializer {
     private Realm realm;
 
