@@ -17,6 +17,7 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 import static android.widget.Toast.LENGTH_SHORT;
+import static com.mwmurawski.ufcquiz.Const.BUTTONS_NEXT;
 
 public class MainActivity
         extends
@@ -46,6 +47,8 @@ public class MainActivity
     Questionable question;
     DataInitializer dataInitializer;
 
+    String buttonState;
+
     Handler handler;
 
     @Override
@@ -66,16 +69,29 @@ public class MainActivity
         if (savedInstanceState == null) {
             configureFirstOpen();
         } else {
-            Const mode = (Const) savedInstanceState.get(Const.STATE.getName());
-            if (mode != null)
-                restoreView(mode);
+            buttonState = savedInstanceState.getString(Const.PARCELABLE_STATE.getName());
+            game = savedInstanceState.getParcelable(Const.PARCELABLE_GAME.getName());
+            question = savedInstanceState.getParcelable(Const.PARCELABLE_QUESTION.getName());
+
+            if (buttonState != null)
+                restoreView(buttonState);
         }
     }
 
-    private void restoreView(Const mode) {
-        switch (mode) {
-            case GAME_STATE_START: //TODO repair
-//                int i;
+    /**
+     * Restore existing views after screen rotation
+     * @param buttonState state of a game i.e. button
+     */
+    private void restoreView(String buttonState) {
+        switch (Const.valueOf(buttonState)){
+            case BUTTONS_NEXT:
+                gameFragment = (GameFragment) getFragmentManager().findFragmentById(R.id.game_window);
+                buttonFragment = (ButtonFragment) getFragmentManager().findFragmentById(R.id.button_window);
+                break;
+            case BUTTONS_START:
+            case BUTTONS_END:
+                mainWindowFragment = (MainWindowFragment) getFragmentManager().findFragmentById(R.id.game_window);
+                buttonFragment = (ButtonFragment) getFragmentManager().findFragmentById(R.id.button_window);
                 break;
         }
     }
@@ -131,10 +147,19 @@ public class MainActivity
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(Const.PARCELABLE_QUESTION.getName(), question);
+        outState.putParcelable(Const.PARCELABLE_GAME.getName(), game);
+
+        outState.putString(Const.PARCELABLE_STATE.getName(), buttonState);
+
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public String onButtonClick(final String mode) {
-        String buttonState = null;
+        buttonState = null;
         switch (Const.valueOf(mode)) {
 
             // ================================================ BUTTON_START CASE
@@ -161,7 +186,7 @@ public class MainActivity
                 //change game state
                 game.setGameState(Const.GAME_STATE_PLAYING);
 
-                buttonState = Const.BUTTONS_NEXT.getName();
+                buttonState = BUTTONS_NEXT.getName();
                 break;
 
             // ================================================ BUTTON_NEXT CASE
@@ -169,7 +194,7 @@ public class MainActivity
             case BUTTONS_NEXT:
 
                 if (gameFragment.isSelectionEmpty()) {
-                    buttonState = Const.BUTTONS_NEXT.getName(); //cause var is nulled in the beginning
+                    buttonState = BUTTONS_NEXT.getName(); //cause var is nulled in the beginning
                     Toast.makeText(this, "Select answer!", LENGTH_SHORT).show();
                     break;
                 }
@@ -207,7 +232,7 @@ public class MainActivity
                 }, DELAY);
 
                 //change button state (depends on if stack is empty)
-                buttonState = game.isQuestionStackEmpty() ? Const.BUTTONS_END.getName() : Const.BUTTONS_NEXT.getName();
+                buttonState = game.isQuestionStackEmpty() ? Const.BUTTONS_END.getName() : BUTTONS_NEXT.getName();
                 break;
 
             // ================================================ BUTTON_END CASE

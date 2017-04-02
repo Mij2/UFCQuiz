@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="question_style">
+        <item name="android:layout_margin">@dimen/question_margin</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/question_text_size</item>
+    </style>
+
 </resources>

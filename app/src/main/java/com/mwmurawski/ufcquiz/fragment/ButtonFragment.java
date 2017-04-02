@@ -59,13 +59,24 @@ public class ButtonFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(Const.PARCELABLE_STATE.getName(),currentModeString);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_button, container, false);
         unbinder = ButterKnife.bind(this, view);
+        setRetainInstance(true);
 
         if (getArguments() != null) {
             currentModeString = getArguments().getString(MODE);
+        }
+
+        if (savedInstanceState != null){
+            currentModeString = savedInstanceState.getString(Const.PARCELABLE_STATE.getName());
         }
 
         //sets button text, depends on mode set when instance was made
@@ -84,12 +95,15 @@ public class ButtonFragment extends Fragment {
         if (currentMode == null) return;
         switch (Const.valueOf(currentMode)){
             case BUTTONS_START:
+            case GAME_STATE_START:
                 button.setText("START");
                 break;
             case BUTTONS_NEXT:
+            case GAME_STATE_PLAYING:
                 button.setText("NEXT QUESTION");
                 break;
             case BUTTONS_END:
+            case GAME_STATE_END:
                 button.setText("RESTART");
                 break;
         }

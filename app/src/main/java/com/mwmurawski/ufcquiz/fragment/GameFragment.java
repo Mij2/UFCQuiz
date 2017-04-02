@@ -10,6 +10,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.mwmurawski.ufcquiz.Const;
 import com.mwmurawski.ufcquiz.R;
 import com.mwmurawski.ufcquiz.game.Questionable;
 
@@ -41,6 +42,8 @@ public class GameFragment extends Fragment {
 
     private Integer correctId;
 
+    private Questionable questionToRestore;
+
     private OnFragmentGameListener mCallback;
 
     public GameFragment() {
@@ -65,6 +68,7 @@ public class GameFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game, container, false);
         unbinder = ButterKnife.bind(this, view);
+        setRetainInstance(true);
         //Colors handlers
         defaultColor = answer1.getCurrentTextColor();
         answer1.getTextColors();
@@ -73,7 +77,20 @@ public class GameFragment extends Fragment {
         //noinspection deprecation
         wrongColor = getResources().getColor(R.color.wrong);
 
+        if (savedInstanceState != null){
+            questionToRestore = savedInstanceState.getParcelable(Const.PARCELABLE_QUESTION.getName());
+            setGameQuestion(questionToRestore);
+        }
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        outState.putParcelable(Const.PARCELABLE_QUESTION.getName(), questionToRestore);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -104,6 +121,7 @@ public class GameFragment extends Fragment {
      * @param question Question object
      */
     public void setGameQuestion(final Questionable question) {
+        questionToRestore = question;
         questionText.setText(question.getQuestion());
         List<String> answers = question.getAnswers();
         answer1.setText(answers.get(0));

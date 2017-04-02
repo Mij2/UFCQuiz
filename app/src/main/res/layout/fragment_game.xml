@@ -14,9 +14,7 @@
             android:id="@+id/question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:gravity="center"
-            android:textSize="20sp"
+            style="@style/question_style"
             tools:text="Question?"/>
 
         <RadioGroup
