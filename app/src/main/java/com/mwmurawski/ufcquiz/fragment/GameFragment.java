@@ -11,7 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.mwmurawski.ufcquiz.R;
-import com.mwmurawski.ufcquiz.game.Question;
+import com.mwmurawski.ufcquiz.game.Questionable;
 
 import java.util.List;
 
@@ -103,7 +103,7 @@ public class GameFragment extends Fragment {
      * Sets question and answers to radiobuttons
      * @param question Question object
      */
-    public void setGameQuestion(final Question question) {
+    public void setGameQuestion(final Questionable question) {
         questionText.setText(question.getQuestion());
         List<String> answers = question.getAnswers();
         answer1.setText(answers.get(0));

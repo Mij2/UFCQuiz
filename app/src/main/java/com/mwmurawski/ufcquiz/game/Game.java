@@ -2,6 +2,7 @@ package com.mwmurawski.ufcquiz.game;
 
 import com.mwmurawski.ufcquiz.Const;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
@@ -17,8 +18,8 @@ public class Game {
 
     private Integer numberOfQuestions;
     private Realm realm;
-    private List<Question> listOfQuestions;
-    private Stack<Question> stackOfQuestions;
+    private List<Questionable> listOfQuestions;
+    private Stack<Questionable> stackOfQuestions;
     private Integer score;
 
     private Const gameState;
@@ -51,17 +52,21 @@ public class Game {
         listOfQuestions = getQuestions();
         stackOfQuestions = new Stack<>();
         Collections.shuffle(listOfQuestions);
-//        stackOfQuestions.addAll(listOfQuestions);
-        stackOfQuestions.add(listOfQuestions.get(0));
+        stackOfQuestions.addAll(listOfQuestions);
+//        stackOfQuestions.add(listOfQuestions.get(0)); //FIXME Debug mode
     }
 
-    public Question getNextQuestion() {
+    public Questionable getNextQuestion() {
         return stackOfQuestions.pop();
     }
 
-    private List<Question> getQuestions() {
+    private List<Questionable> getQuestions() {
         RealmResults<Question> result = realm.where(Question.class).findAll();
-        return realm.copyFromRealm(result);
+        List<Question> questionList = realm.copyFromRealm(result);
+        List<Questionable> questionableList = new ArrayList<>();
+        questionableList.addAll(questionList);
+        return questionableList;
+//        return realm.copyFromRealm(result);
     }
 
     public void incrementScore(){

@@ -10,7 +10,7 @@ import com.mwmurawski.ufcquiz.fragment.GameFragment;
 import com.mwmurawski.ufcquiz.fragment.MainWindowFragment;
 import com.mwmurawski.ufcquiz.game.DataInitializer;
 import com.mwmurawski.ufcquiz.game.Game;
-import com.mwmurawski.ufcquiz.game.Question;
+import com.mwmurawski.ufcquiz.game.Questionable;
 
 import butterknife.ButterKnife;
 import io.realm.Realm;
@@ -18,7 +18,13 @@ import io.realm.RealmConfiguration;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class MainActivity extends AppCompatActivity implements GameFragment.OnFragmentGameListener, ButtonFragment.OnFragmentStartEndListener, MainWindowFragment.OnFragmentInteractionListenerMainWindow {
+public class MainActivity
+        extends
+        AppCompatActivity
+        implements
+        GameFragment.OnFragmentGameListener,
+        ButtonFragment.OnFragmentStartEndListener,
+        MainWindowFragment.OnFragmentInteractionListenerMainWindow {
 
     //const
     private final Integer DELAY = 100;
@@ -37,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements GameFragment.OnFr
 
     //game vars
     Game game;
-    Question question;
+    Questionable question;
     DataInitializer dataInitializer;
 
     Handler handler;
@@ -78,9 +84,9 @@ public class MainActivity extends AppCompatActivity implements GameFragment.OnFr
     public void onBackPressed() {
         int count = getFragmentManager().getBackStackEntryCount();
 
-        if (count==0){
+        if (count == 0) {
             super.onBackPressed();
-        }else{
+        } else {
 
             if (buttonFragment.isButtonSetToStart())
                 super.onBackPressed();
@@ -89,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements GameFragment.OnFr
             ButtonFragment buttonFragment = (ButtonFragment) getFragmentManager().findFragmentById(R.id.button_window);
             buttonFragment.changeCurrentModeString(Const.BUTTONS_START.getName());
 
-            //TODO EXTREMELY WRONG.. BUT IT'S WORKING
+            //TODO EXTREMELY WRONG.. BUT IT'S WORKING (almost)
 
             MainWindowFragment startFragment = MainWindowFragment.newInstance(Const.GAME_STATE_START);
             getFragmentManager().beginTransaction()
@@ -162,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements GameFragment.OnFr
 
             case BUTTONS_NEXT:
 
-                if(gameFragment.isSelectionEmpty()) {
+                if (gameFragment.isSelectionEmpty()) {
                     buttonState = Const.BUTTONS_NEXT.getName(); //cause var is nulled in the beginning
                     Toast.makeText(this, "Select answer!", LENGTH_SHORT).show();
                     break;
@@ -221,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements GameFragment.OnFr
     }
 
 
-    private boolean isRightAnswerSelected(Question question, GameFragment fragment) {
+    private boolean isRightAnswerSelected(Questionable question, GameFragment fragment) {
         return question.getCorrectAnswerId(question.getAnswers()).equals(fragment.getSelectedRadioButtonId());
     }
 }

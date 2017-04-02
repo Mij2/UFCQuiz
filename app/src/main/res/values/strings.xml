@@ -5,5 +5,5 @@
     <string name="start_game">Start Game</string>
     <string name="main_window_error">Result: ERROR</string>
     <string name="main_window_welcome">WELCOME IN MMA QUIZ</string>
-    <string name="main_window_result">Result: </string>
+    <string name="main_window_result">Result:\n</string>
 </resources>
