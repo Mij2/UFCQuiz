@@ -75,8 +75,8 @@ public class Game implements Parcelable {
         listOfQuestions = getQuestions();
         stackOfQuestions = new Stack<>();
         Collections.shuffle(listOfQuestions);
-//        stackOfQuestions.addAll(listOfQuestions);
-        stackOfQuestions.add(listOfQuestions.get(0)); //FIXME Debug mode
+        stackOfQuestions.addAll(listOfQuestions);
+//        stackOfQuestions.add(listOfQuestions.get(0)); //FIXME Debug mode
     }
 
     public Questionable getNextQuestion() {
