@@ -1,5 +1,6 @@
 package com.mwmurawski.ufcquiz;
 
+//TODO Think about thic enum and maybe change it to class with static fields..
 public enum Const {
     //state
     STATE("STATE"),
@@ -32,6 +33,7 @@ public enum Const {
     FRAG_GAME("FRAG_GAME"),
     FRAG_MAIN("FRAG_MAIN"),
 
+    //parcelable consts
     PARCELABLE_QUESTION("PARCELABLE_QUESTION"),
     PARCELABLE_GAME("PARCELABLE_GAME"),
     PARCELABLE_STATE("PARCELABLE_STATE"),
