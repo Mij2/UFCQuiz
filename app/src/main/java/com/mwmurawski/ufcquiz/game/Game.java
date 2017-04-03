@@ -27,26 +27,6 @@ public class Game implements Parcelable {
 
     private Const gameState;
 
-//    protected Game(Parcel in) {
-//        numberOfQuestions = in.readInt();
-//        stackOfQuestions = in.readli
-//        parcel.writeList(stackOfQuestions);
-//        parcel.writeInt(score);
-//        parcel.writeString(gameState.getName());
-//    }
-//
-//    public static final Creator<Game> CREATOR = new Creator<Game>() {
-//        @Override
-//        public Game createFromParcel(Parcel in) {
-//            return new Game(in);
-//        }
-//
-//        @Override
-//        public Game[] newArray(int size) {
-//            return new Game[size];
-//        }
-//    };
-
     public Const getGameState() {
         return gameState;
     }
