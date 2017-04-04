@@ -12,6 +12,12 @@
         <item name="android:layout_margin">@dimen/question_margin</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/question_text_size</item>
+        <item name="android:fontFamily">sans-serif</item>
     </style>
+
+    <style name="font_style">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
 
 </resources>

@@ -13,10 +13,6 @@ import java.util.Stack;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-/**
- * Created by Mij on 2017-02-28.
- */
-
 public class Game implements Parcelable {
 
     private Integer numberOfQuestions;

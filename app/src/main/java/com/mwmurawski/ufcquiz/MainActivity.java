@@ -28,7 +28,7 @@ public class MainActivity
         MainWindowFragment.OnFragmentInteractionListenerMainWindow {
 
     //const
-    private final Integer DELAY = 100;
+    private final Integer DELAY = 500;
 
     //realm
     Realm realm;
